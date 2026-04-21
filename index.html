@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esperanza María Martínez | Master Nail Artist</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <style>
+        :root {
+            --ivory: #fdfcfb;
+            --champagne: #c5a059;
+            --soft-pink: #f4d7d9;
+            /* Rosa estilizado */
+            --accent-pink: #e8b4b8;
+            --nude: #f4e9e2;
+            --text: #2a2420;
+            --text-light: #6b5e54;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--ivory);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ----- BURBUJAS DE FONDO ----- */
+        #bubbles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        section, nav, .border-frame, .contact-modal {
+            position: relative;
+            z-index: 1;
+        }
+
+
+        /* Navegación */
+        nav {
+            position: fixed;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(253, 252, 251, 0.85);
+            backdrop-filter: blur(20px);
+            padding: 12px 30px;
+            border-radius: 50px;
+            z-index: 1000;
+            display: flex;
+            gap: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            transition: 0.3s;
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+
+        nav a:hover {
+            background-color: var(--soft-pink);
+            color: var(--text);
+        }
+
+        section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 120px 10%;
+        }
+
+        #inicio {
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        h1,
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 300;
+        }
+
+        p {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .section-title {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+        }
+
+        .section-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.6rem;
+            color: #9c8e82;
+            margin-bottom: 80px;
+        }
+
+        /* ----- CARRUSEL DINÁMICO ----- */
+        .techniques-list {
+            display: flex;
+            flex-direction: column;
+            gap: 120px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .technique-card {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/5;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 20px 20px 60px rgba(0, 0, 0, 0.05);
+        }
+
+        .carousel-track {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            /* Transición más fluida y profesional */
+            transition: transform 0.8s cubic-bezier(0.7, 0, 0.3, 1);
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Efecto de profundidad al cambiar */
+            transform: scale(0.95);
+            transition: transform 1s ease;
+            filter: grayscale(20%);
+        }
+
+        /* Clase activa para la imagen que se está viendo */
+        .carousel-container .active-slide {
+            transform: scale(1);
+            filter: grayscale(0%);
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text);
+            transition: 0.4s;
+            z-index: 10;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .carousel-btn:hover {
+            background: var(--accent-pink);
+            color: white;
+        }
+
+        .carousel-btn.prev {
+            left: 20px;
+        }
+
+        .carousel-btn.next {
+            right: 20px;
+        }
+
+        .technique-info h3 {
+            font-family: 'Cormorant Garamond', serif;
+            letter-spacing: 1px;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .technique-info .subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: bold;
+            font-style: italic;
+            font-size: 1.4rem;
+            color: var(--champagne);
+            margin-bottom: 25px;
+        }
+
+        /* ----- MARCO EMERGENTE DE CONTACTO (MODAL) ----- */
+        .contact-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(42, 36, 32, 0.6);
+            backdrop-filter: blur(8px);
+            display: none;
+            /* Oculto por defecto */
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .contact-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--ivory);
+            padding: 60px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            border-radius: 2px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+            transform: translateY(30px);
+            transition: transform 0.5s ease;
+        }
+
+        .contact-modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--accent-pink);
+        }
+
+        /* Estilos formulario */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        input,
+        textarea {
+            background: white;
+            border: 1px solid var(--soft-pink);
+            padding: 15px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+        }
+
+        button.submit-btn {
+            background: var(--text);
+            color: white;
+            border: none;
+            padding: 18px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button.submit-btn:hover {
+            background: var(--accent-pink);
+        }
+
+        .modal-socials {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .modal-socials a {
+            font-size: 1.5rem;
+            color: var(--text);
+            transition: 0.3s;
+        }
+
+        .modal-socials a:hover {
+            color: var(--accent-pink);
+        }
+
+        @media (max-width: 900px) {
+            .technique-card {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .modal-content {
+                padding: 40px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="bubbles-canvas"></canvas>
+
+    <nav>
+        <a href="#inicio">Inicio</a>
+        <a href="#tecnicas">Técnicas</a>
+        <a onclick="openContact()">Contacto</a>
+    </nav>
+
+    <section id="inicio">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 30px;">
+            <div style="height: 1px; width: 50px; background-color: var(--accent-pink);"></div>
+            <span
+                style="font-size: 0.90rem; font-weight: bold; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent-pink);">Portfolio</span>
+            <div style="height: 1px; width: 50px; background-color: var(--accent-pink);"></div>
+        </div>
+        <h1 style="font-size: 4.5rem; line-height: 1.1;">Esperanza María<br>Martínez</h1>
+        <p
+            style="font-family: 'Cormorant Garamond'; font-size: 1.5rem; font-weight: bold; color: var(--champagne); font-style: italic; margin-top: 20px;">
+            Técnico Manicurista</p>
+    </section>
+
+    <section id="tecnicas">
+        <h2 class="section-title">Técnicas</h2>
+        <p class="section-subtitle">Dominio absoluto de las técnicas más exigentes</p>
+
+        <div class="techniques-list">
+
+            <div class="technique-card">
+                <div class="carousel-container" data-carousel>
+                    <div class="carousel-track" data-carousel-track>
+                        <img src="semipermanente_1.jpeg" class="carousel-slide active-slide" alt="Semipermanente 1">
+                        <img src="semipermanente_2.jpeg" class="carousel-slide" alt="Semipermanente 2">
+                        <img src="semipermanente_3.jpeg" class="carousel-slide" alt="Semipermanente 3">
+                        <img src="semipermanenteDecoracion_1.jpeg" class="carousel-slide" alt="Decoración">
+                    </div>
+                    <button class="carousel-btn prev" data-carousel-button="prev"><i
+                            class="ph ph-caret-left"></i></button>
+                    <button class="carousel-btn next" data-carousel-button="next"><i
+                            class="ph ph-caret-right"></i></button>
+                </div>
+                <div class="technique-info">
+                    <h3>Semipermanente</h3>
+                    <div class="subtitle">Perfección duradera</div>
+                    <p>Nivelación de ápex con precisión milimétrica y aplicación de bases Rubber de alta gama.</p>
+                </div>
+            </div>
+
+            <div class="technique-card">
+                <div class="carousel-container" data-carousel>
+                    <div class="carousel-track" data-carousel-track>
+                        <img src="baseRubberFrancesa_1.jpeg" class="carousel-slide active-slide" alt="Francesa 1">
+                        <img src="baseRubberFrancesaLateral_1.jpeg" class="carousel-slide" alt="Francesa 2">
+                    </div>
+                    <button class="carousel-btn prev" data-carousel-button="prev"><i
+                            class="ph ph-caret-left"></i></button>
+                    <button class="carousel-btn next" data-carousel-button="next"><i
+                            class="ph ph-caret-right"></i></button>
+                </div>
+                <div class="technique-info">
+                    <h3>Francesa</h3>
+                    <div class="subtitle">Elegancia clásica</div>
+                    <p>Simetría perfecta de encastres con línea de sonrisa nítida y definida.</p>
+                </div>
+            </div>
+
+            <div class="technique-card">
+                <div class="carousel-container" data-carousel>
+                    <div class="carousel-track" data-carousel-track>
+                        <img src="acrigel_1.jpeg" class="carousel-slide active-slide" alt="Acrigel 1">
+                        <img src="acrilico_1.jpeg" class="carousel-slide" alt="Acrilico 1">
+                    </div>
+                    <button class="carousel-btn prev" data-carousel-button="prev"><i
+                            class="ph ph-caret-left"></i></button>
+                    <button class="carousel-btn next" data-carousel-button="next"><i
+                            class="ph ph-caret-right"></i></button>
+                </div>
+                <div class="technique-info">
+                    <h3>Esculpidas</h3>
+                    <div class="subtitle">Arquitectura Slim</div>
+                    <p>Dominio de la curvatura C y técnica de pinzado para uñas de resistencia superior.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <div class="contact-modal" id="contactModal">
+        <div class="modal-content">
+            <i class="ph ph-x close-modal" onclick="closeContact()"></i>
+            <h2 style="font-size: 2.5rem; text-align: center; font-family: 'Playfair Display'; margin-bottom: 7px;">
+                Contacto</h2>
+            <p style="font-size: 1.45rem; text-align: center; color: var(--champagne); font-style: italic;">
+                Colaboraciones y Citas</p>
+
+            <form id="contact-form">
+                <input type="text" name="user_name" placeholder="Nombre Completo" required>
+                <input type="tel" name="user_phone" placeholder="Número de Teléfono" required>
+                <textarea name="message" placeholder="Tu mensaje..." rows="4" required></textarea>
+                <button type="submit" class="submit-btn" id="btn-text">Enviar Solicitud</button>
+            </form>
+
+            <div class="modal-socials">
+                <a href="https://wa.me/662199253" target="_blank"><i class="ph ph-whatsapp-logo"></i></a>
+                <a href="mailto:esperanzza114@gmail.com"><i class="ph ph-envelope-simple"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- EMAILJS ---
+        emailjs.init("t1T6NdIZW7Txi2Yfm");
+
+        const contactForm = document.getElementById('contact-form');
+        const btnText = document.getElementById('btn-text');
+
+        contactForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            btnText.innerText = "ENVIANDO...";
+            emailjs.sendForm('service_b3u0h4p', 'template_si0avrm', this)
+                .then(() => {
+                    btnText.innerText = "¡ENVIADO!";
+                    setTimeout(() => {
+                        closeContact();
+                        btnText.innerText = "ENVIAR SOLICITUD";
+                        contactForm.reset();
+                    }, 2000);
+                }, (err) => {
+                    btnText.innerText = "ERROR";
+                    alert("Error: " + JSON.stringify(err));
+                });
+        });
+
+        // --- LÓGICA MODAL ---
+        function openContact() {
+            const modal = document.getElementById('contactModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('active'), 10);
+        }
+
+        function closeContact() {
+            const modal = document.getElementById('contactModal');
+            modal.classList.remove('active');
+            setTimeout(() => modal.style.display = 'none', 400);
+        }
+
+        // Cerrar al hacer clic fuera del cuadro
+        window.onclick = function (event) {
+            const modal = document.getElementById('contactModal');
+            if (event.target == modal) closeContact();
+        }
+
+        // --- CARRUSEL PROFESIONAL ---
+        const carousels = document.querySelectorAll('[data-carousel]');
+        carousels.forEach(carousel => {
+            const track = carousel.querySelector('[data-carousel-track]');
+            const slides = Array.from(track.children);
+            const nextButton = carousel.querySelector('[data-carousel-button="next"]');
+            const prevButton = carousel.querySelector('[data-carousel-button="prev"]');
+
+            let currentIndex = 0;
+
+            const updateCarousel = () => {
+                track.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+                // Actualizar clases para efecto de escala
+                slides.forEach((slide, index) => {
+                    if (index === currentIndex) {
+                        slide.classList.add('active-slide');
+                    } else {
+                        slide.classList.remove('active-slide');
+                    }
+                });
+            };
+
+            nextButton.addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % slides.length;
+                updateCarousel();
+            });
+
+            prevButton.addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+                updateCarousel();
+            });
+        });
+
+        // --- BURBUJAS DINÁMICAS ---
+        const canvas = document.getElementById('bubbles-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const iridescent = [
+            [255, 180, 200], // rosa
+            [180, 200, 255], // azul
+            [200, 255, 210], // verde
+            [255, 230, 160], // dorado
+            [220, 180, 255], // lila
+            [180, 240, 240], // turquesa
+        ];
+
+        class Bubble {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                this.radius = 30 + Math.random() * 90;
+                this.x = this.radius + Math.random() * (canvas.width - this.radius * 2);
+                this.y = this.radius + Math.random() * (canvas.height - this.radius * 2);
+                this.vx = (Math.random() - 0.5) * 0.6;
+                this.vy = (Math.random() - 0.5) * 0.6;
+                this.wobbleSpeed = 0.002 + Math.random() * 0.004;
+                this.wobbleAmp = 8 + Math.random() * 15;
+                this.phase = Math.random() * Math.PI * 2;
+                this.parallaxFactor = 0.1 + Math.random() * 0.4;
+                this.hueShift = Math.random() * 360;
+                this.color1 = iridescent[Math.floor(Math.random() * iridescent.length)];
+                this.color2 = iridescent[Math.floor(Math.random() * iridescent.length)];
+                this.damping = 0.85 + Math.random() * 0.1;
+            }
+
+            update(time, scrollY) {
+                // Aplicar velocidad
+                this.x += this.vx;
+                this.y += this.vy;
+
+                this.phase += this.wobbleSpeed;
+
+                // Rebote en los laterales (izquierda y derecha)
+                if (this.x - this.radius < 0) {
+                    this.x = this.radius;
+                    this.vx = Math.abs(this.vx) * this.damping;
+                }
+                if (this.x + this.radius > canvas.width) {
+                    this.x = canvas.width - this.radius;
+                    this.vx = -Math.abs(this.vx) * this.damping;
+                }
+
+                // Rebote en la parte de arriba
+                if (this.y - this.radius < 0) {
+                    this.y = this.radius;
+                    this.vy = Math.abs(this.vy) * this.damping;
+                }
+
+                // Rebote en la parte de abajo (final de la página)
+                const pageHeight = document.documentElement.scrollHeight;
+                const bottomBoundary = canvas.height + (pageHeight - canvas.height - scrollY);
+                if (this.y + this.radius > bottomBoundary) {
+                    this.y = bottomBoundary - this.radius;
+                    this.vy = -Math.abs(this.vy) * this.damping;
+                }
+
+                // También rebotar en la parte inferior del viewport si no hay más scroll
+                if (this.y + this.radius > canvas.height) {
+                    this.y = canvas.height - this.radius;
+                    this.vy = -Math.abs(this.vy) * this.damping;
+                }
+
+                // Pequeña perturbación aleatoria para que no se queden quietas
+                this.vx += (Math.random() - 0.5) * 0.02;
+                this.vy += (Math.random() - 0.5) * 0.02;
+
+                // Limitar velocidad máxima
+                const maxSpeed = 1.5;
+                this.vx = Math.max(-maxSpeed, Math.min(maxSpeed, this.vx));
+                this.vy = Math.max(-maxSpeed, Math.min(maxSpeed, this.vy));
+
+                // Posición de dibujado con wobble y parallax
+                const wobbleX = Math.sin(this.phase) * this.wobbleAmp;
+                const wobbleY = Math.cos(this.phase * 0.7) * this.wobbleAmp * 0.5;
+                this.drawX = this.x + wobbleX;
+                this.drawY = this.y + wobbleY + scrollY * this.parallaxFactor;
+            }
+
+            draw(ctx) {
+                const x = this.drawX;
+                const y = this.drawY;
+                const r = this.radius;
+
+                ctx.save();
+
+                // 1. Outer rim glow — the "skin" of the bubble
+                const rimGrad = ctx.createRadialGradient(x, y, r * 0.82, x, y, r);
+                const c1 = this.color1;
+                const c2 = this.color2;
+                rimGrad.addColorStop(0, 'rgba(255, 255, 255, 0)');
+                rimGrad.addColorStop(0.6, `rgba(${c1[0]}, ${c1[1]}, ${c1[2]}, 0.15)`);
+                rimGrad.addColorStop(0.78, `rgba(${c1[0]}, ${c1[1]}, ${c1[2]}, 0.35)`);
+                rimGrad.addColorStop(0.88, `rgba(${c2[0]}, ${c2[1]}, ${c2[2]}, 0.45)`);
+                rimGrad.addColorStop(0.95, `rgba(${c1[0]}, ${c1[1]}, ${c1[2]}, 0.3)`);
+                rimGrad.addColorStop(1, `rgba(${c2[0]}, ${c2[1]}, ${c2[2]}, 0.1)`);
+
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fillStyle = rimGrad;
+                ctx.fill();
+
+                // 2. Thin rim border  
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(255, 255, 255, 0.55)`;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // 3. Inner iridescent arc (rainbow band along the edge)
+                const iriAngle = this.phase * 0.5;
+                for (let i = 0; i < 3; i++) {
+                    const angle = iriAngle + (i * Math.PI * 0.6);
+                    const arcX = x + Math.cos(angle) * r * 0.65;
+                    const arcY = y + Math.sin(angle) * r * 0.65;
+                    const arcR = r * 0.55;
+                    const col = iridescent[(Math.floor(this.hueShift + i * 2)) % iridescent.length];
+
+                    const iriGrad = ctx.createRadialGradient(arcX, arcY, 0, arcX, arcY, arcR);
+                    iriGrad.addColorStop(0, `rgba(${col[0]}, ${col[1]}, ${col[2]}, 0.25)`);
+                    iriGrad.addColorStop(0.5, `rgba(${col[0]}, ${col[1]}, ${col[2]}, 0.1)`);
+                    iriGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+                    ctx.beginPath();
+                    ctx.arc(arcX, arcY, arcR, 0, Math.PI * 2);
+                    ctx.fillStyle = iriGrad;
+                    ctx.fill();
+                }
+
+                // 4. Main specular highlight (top-left bright spot)
+                const hlX = x - r * 0.32;
+                const hlY = y - r * 0.35;
+                const hlR = r * 0.28;
+
+                const hlGrad = ctx.createRadialGradient(hlX, hlY, 0, hlX, hlY, hlR);
+                hlGrad.addColorStop(0, 'rgba(255, 255, 255, 0.92)');
+                hlGrad.addColorStop(0.3, 'rgba(255, 255, 255, 0.5)');
+                hlGrad.addColorStop(0.7, 'rgba(255, 255, 255, 0.1)');
+                hlGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+                ctx.beginPath();
+                ctx.arc(hlX, hlY, hlR, 0, Math.PI * 2);
+                ctx.fillStyle = hlGrad;
+                ctx.fill();
+
+                // 5. Secondary small highlight (bottom-right)
+                const hl2X = x + r * 0.28;
+                const hl2Y = y + r * 0.32;
+                const hl2R = r * 0.12;
+
+                const hl2Grad = ctx.createRadialGradient(hl2X, hl2Y, 0, hl2X, hl2Y, hl2R);
+                hl2Grad.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
+                hl2Grad.addColorStop(0.5, 'rgba(255, 255, 255, 0.15)');
+                hl2Grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+                ctx.beginPath();
+                ctx.arc(hl2X, hl2Y, hl2R, 0, Math.PI * 2);
+                ctx.fillStyle = hl2Grad;
+                ctx.fill();
+
+                // 6. Crescent highlight along rim (moon-shaped reflection)
+                ctx.beginPath();
+                ctx.arc(x, y, r * 0.95, -0.8, 0.4);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.lineWidth = r * 0.08;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+
+                ctx.restore();
+            }
+        }
+
+        const bubbles = [];
+        const BUBBLE_COUNT = 24;
+        for (let i = 0; i < BUBBLE_COUNT; i++) {
+            bubbles.push(new Bubble());
+        }
+
+        let currentScroll = 0;
+        window.addEventListener('scroll', () => {
+            currentScroll = window.scrollY;
+        });
+
+        function animate(time) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            bubbles.forEach(b => {
+                b.update(time, currentScroll);
+                b.draw(ctx);
+            });
+
+            requestAnimationFrame(animate);
+        }
+        requestAnimationFrame(animate);
+    </script>
+</body>
+
+</html>
